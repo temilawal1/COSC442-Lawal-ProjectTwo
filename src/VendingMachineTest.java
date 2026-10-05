@@ -111,17 +111,19 @@ public class VendingMachineTest {
         // doesnt need to be another test? cause the code would just be the same
     }
 
-    @Test
-    public void testInsertMoney_InvalidAmount() {
+    @ParameterizedTest
+    @ValueSource(doubles = {-10.00, 0.0})
+    public void testInsertMoney_InvalidAmount(double funds) {
         assertThrows(VendingMachineException.class, () -> {
-            machine.insertMoney(-10.00);
-            machine.insertMoney(0.0);
+            machine.insertMoney(funds);
         });
         // initial test passed
+        // changed to parameterized test to check negatives and zero value
+        // test passed
     }
 
     @Test
-    public void testGetBalance() throws VendingMachineException {
+    public void testGetBalance() {
         assertEquals(0.0, machine.getBalance());
     }
 
@@ -132,6 +134,9 @@ public class VendingMachineTest {
 
         assertTrue(machine.makePurchase("A"));
         // initial test passed
+        assertEquals(3.50, machine.getBalance()); // also checks that money was removed
+        assertEquals(null, machine.getItem("A")); // also checks that item was removed
+        // updated test passed boom
     }
 
     @Test
@@ -151,13 +156,23 @@ public class VendingMachineTest {
         // no slot initialized so should just return false
         // initial test passed
     }
-    // get balance method
 
-    // return change method
 
-    // make purchase method
-    // good balance + bad balance
-    // empty slot
+    @Test
+    public void testReturnChange() throws VendingMachineException {
+        machine.insertMoney(5.00); // add initial monayz
+        
+        assertEquals(5.00, machine.returnChange());
+        assertEquals(0.00, machine.getBalance()); // balance should be 0 cause all change is returned?
+        // intiial test passed yay
+    }
+
+    @Test
+    public void testReturnChange_NoBalance() {
+        assertEquals(0.00, machine.returnChange()); // i assume this will work since above test worked
+        assertEquals(0.00, machine.getBalance());
+        // bang initial test passed
+    }
 
     // return change
 
